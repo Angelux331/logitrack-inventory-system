@@ -4,6 +4,7 @@ import com.logitrack.logitrack_backend.model.*;
 import com.logitrack.logitrack_backend.repository.InventarioRepository;
 import com.logitrack.logitrack_backend.repository.MovimientoRepository;
 import com.logitrack.logitrack_backend.repository.DetalleMovimientoRepository;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -63,7 +64,7 @@ public class MovimientoService {
       case ENTRADA:
 
         Inventario inventarioEntrada =
-          obtenerInventario(
+          obtenerOCrearInventario(
             movimiento.getBodegaDestino().getIdBodega(),
             idProducto
           );
@@ -113,7 +114,7 @@ public class MovimientoService {
         }
 
         Inventario inventarioDestino =
-          obtenerInventario(
+          obtenerOCrearInventario(
             movimiento.getBodegaDestino().getIdBodega(),
             idProducto
           );
@@ -147,5 +148,32 @@ public class MovimientoService {
           "No existe inventario para esa bodega y producto"
         )
       );
+  }
+  private Inventario obtenerOCrearInventario(
+    Long idBodega,
+    Long idProducto
+  ) {
+
+    return inventarioRepository
+      .findByBodega_IdBodegaAndProducto_IdProducto(
+        idBodega,
+        idProducto
+      )
+      .orElseGet(() -> {
+
+        Inventario nuevo = new Inventario();
+
+        Bodega bodega = new Bodega();
+        bodega.setIdBodega(idBodega);
+
+        Producto producto = new Producto();
+        producto.setIdProducto(idProducto);
+
+        nuevo.setBodega(bodega);
+        nuevo.setProducto(producto);
+        nuevo.setStock(0);
+
+        return nuevo;
+      });
   }
 }

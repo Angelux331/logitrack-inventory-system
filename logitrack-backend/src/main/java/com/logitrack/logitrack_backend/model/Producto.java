@@ -18,6 +18,7 @@ public class Producto {
   @JoinColumn(name = "id_categoria")
   private Categoria categoria;
 
+  @Column(precision = 10, scale = 2)
   private BigDecimal precio;
 
   private String descripcion;
@@ -46,6 +47,10 @@ public class Producto {
 
   public Boolean getActivo() {
     return activo;
+  }
+
+  public void setIdProducto(Long idProducto) {
+    this.idProducto = idProducto;
   }
 
   public void setNombre(String nombre) {

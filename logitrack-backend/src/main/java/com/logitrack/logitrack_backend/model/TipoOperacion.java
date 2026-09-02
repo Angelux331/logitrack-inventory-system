@@ -1,4 +1,7 @@
 package com.logitrack.logitrack_backend.model;
 
-public class TipoOperacion {
+public enum TipoOperacion {
+  INSERT,
+  UPDATE,
+  DELETE
 }

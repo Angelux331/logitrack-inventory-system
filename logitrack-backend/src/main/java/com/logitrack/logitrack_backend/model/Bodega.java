@@ -47,6 +47,10 @@ public class Bodega {
     return activo;
   }
 
+  public void setIdBodega(Long idBodega) {
+    this.idBodega = idBodega;
+  }
+
   public void setNombre(String nombre) {
     this.nombre = nombre;
   }

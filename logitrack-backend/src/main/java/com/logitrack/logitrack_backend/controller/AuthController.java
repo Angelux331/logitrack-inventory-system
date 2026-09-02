@@ -32,7 +32,9 @@ public class AuthController {
 
     return Map.of(
       "token", "token-temporal",
-      "nombre", usuario.getNombre()
+      "nombre", usuario.getNombre(),
+      "idusuario", String.valueOf(usuario.getIdusuario()),
+      "rol", usuario.getRol()
     );
   }
 }
