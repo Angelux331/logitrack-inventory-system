@@ -1,0 +1,686 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>LogiTrack | Sistema de Inventario</title>
+
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+
+  <body>
+    <!-- ============================= -->
+    <!-- AUTENTICACIÓN -->
+    <!-- ============================= -->
+
+    <section id="authSection" class="auth-section">
+      <div class="auth-card">
+        <div class="brand auth-brand">
+          <div class="brand-logo">L</div>
+
+          <div>
+            <h1>LogiTrack</h1>
+            <span>Inventory Management</span>
+          </div>
+        </div>
+
+        <div class="auth-tabs">
+          <button class="tab-btn active" data-tab="login">
+            Iniciar sesión
+          </button>
+
+          <button class="tab-btn" data-tab="register">Registrarse</button>
+        </div>
+
+        <!-- LOGIN -->
+
+        <form id="loginForm" class="tab-content active">
+          <h2>Bienvenido de nuevo</h2>
+          <p class="form-description">Ingresa a tu cuenta para continuar.</p>
+
+          <label>Email</label>
+          <input
+            type="email"
+            id="loginEmail"
+            placeholder="correo@ejemplo.com"
+            required
+          />
+
+          <label>Contraseña</label>
+          <input
+            type="password"
+            id="loginPassword"
+            placeholder="••••••••"
+            required
+          />
+
+          <p id="loginError" class="error-message"></p>
+
+          <button type="submit" class="primary-btn full">Iniciar sesión</button>
+        </form>
+
+        <!-- REGISTRO -->
+
+        <form id="registerForm" class="tab-content">
+          <h2>Crear cuenta</h2>
+          <p class="form-description">
+            Registra un nuevo usuario en LogiTrack.
+          </p>
+
+          <div class="form-row">
+            <div>
+              <label>Nombre</label>
+              <input type="text" id="regNombre" required />
+            </div>
+
+            <div>
+              <label>Apellido</label>
+              <input type="text" id="regApellido" required />
+            </div>
+          </div>
+
+          <label>Email</label>
+          <input type="email" id="regEmail" required />
+
+          <label>Contraseña</label>
+          <input type="password" id="regPassword" required />
+
+          <label>Rol</label>
+
+          <select id="regRol">
+            <option value="EMPLEADO">Empleado</option>
+            <option value="ADMIN">Administrador</option>
+          </select>
+
+          <p id="registerError" class="error-message"></p>
+
+          <button type="submit" class="primary-btn full">Crear cuenta</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- ============================= -->
+    <!-- SISTEMA -->
+    <!-- ============================= -->
+
+    <section id="dashboard" class="dashboard hidden">
+      <!-- SIDEBAR -->
+      <button id="mobileMenuBtn" class="mobile-menu-btn">☰</button>
+
+      <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+      <aside class="sidebar">
+        <div class="sidebar-top">
+          <div class="brand sidebar-brand">
+            <div class="brand-logo">L</div>
+
+            <div>
+              <h2>LogiTrack</h2>
+              <span>Inventory</span>
+            </div>
+          </div>
+
+          <nav class="sidebar-nav">
+            <button class="menu-btn active" data-view="inicio">
+              <span>⌂</span>
+              <span>Inicio</span>
+            </button>
+
+            <button class="menu-btn" data-view="bodegas">
+              <span>▣</span>
+              <span>Bodegas</span>
+            </button>
+
+            <button class="menu-btn" data-view="productos">
+              <span>□</span>
+              <span>Productos</span>
+            </button>
+
+            <button class="menu-btn" data-view="categorias">
+              <span>▦</span>
+              <span>Categorías</span>
+            </button>
+
+            <button class="menu-btn" data-view="inventario">
+              <span>▤</span>
+              <span>Inventario</span>
+            </button>
+
+            <button class="menu-btn" data-view="movimientos">
+              <span>↔</span>
+              <span>Movimientos</span>
+            </button>
+
+            <button class="menu-btn" data-view="reportes">
+              <span>◫</span>
+              <span>Reportes</span>
+            </button>
+
+            <button class="menu-btn" data-view="auditorias">
+              <span>◕</span>
+              <span>Auditoría</span>
+            </button>
+          </nav>
+        </div>
+
+        <!-- PARTE INFERIOR -->
+
+        <div class="sidebar-bottom">
+          <button id="themeToggle" class="sidebar-action">
+            <span id="themeIcon">☀</span>
+            <span id="themeText">Modo claro</span>
+          </button>
+
+          <div id="userInfo" class="user-info hidden">
+            <div class="user-avatar" id="userAvatar">U</div>
+
+            <div class="user-data">
+              <strong id="userName"> Usuario </strong>
+
+              <span id="userRole"> EMPLEADO </span>
+            </div>
+          </div>
+
+          <button id="btnLogout" class="logout-btn">
+            <span>↪</span>
+            <span>Cerrar sesión</span>
+          </button>
+        </div>
+      </aside>
+
+      <!-- CONTENIDO PRINCIPAL -->
+
+      <main class="main-content">
+        <!-- ============================= -->
+        <!-- INICIO -->
+        <!-- ============================= -->
+
+        <div id="view-inicio" class="view active">
+          <div class="page-header">
+            <div>
+              <span class="eyebrow"> LOGITRACK </span>
+
+              <h1>Panel de control</h1>
+
+              <p>Resumen general del sistema de inventario.</p>
+            </div>
+          </div>
+
+          <!-- ESTADÍSTICAS -->
+
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-icon">🏢</div>
+
+              <div>
+                <span>Total de bodegas</span>
+                <strong id="dashBodegas">0</strong>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon">📦</div>
+
+              <div>
+                <span>Total de productos</span>
+                <strong id="dashProductos">0</strong>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon">📊</div>
+
+              <div>
+                <span>Inventarios</span>
+                <strong id="dashInventarios">0</strong>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon">🔄</div>
+
+              <div>
+                <span>Movimientos</span>
+                <strong id="dashMovimientos">0</strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- SEGUNDA FILA -->
+
+          <div class="dashboard-grid">
+            <div class="panel">
+              <div class="panel-header">
+                <div>
+                  <span class="eyebrow"> ACTIVIDAD </span>
+
+                  <h2>Movimientos</h2>
+                </div>
+              </div>
+
+              <div class="movement-list">
+                <div class="movement-stat">
+                  <div>
+                    <span class="movement-dot entry"></span>
+                    Entradas
+                  </div>
+
+                  <strong id="dashEntradas"> 0 </strong>
+                </div>
+
+                <div class="movement-stat">
+                  <div>
+                    <span class="movement-dot exit"></span>
+                    Salidas
+                  </div>
+
+                  <strong id="dashSalidas"> 0 </strong>
+                </div>
+
+                <div class="movement-stat">
+                  <div>
+                    <span class="movement-dot transfer"></span>
+                    Transferencias
+                  </div>
+
+                  <strong id="dashTransferencias"> 0 </strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-header">
+                <div>
+                  <span class="eyebrow"> DISTRIBUCIÓN </span>
+
+                  <h2>Tipos de movimiento</h2>
+                </div>
+              </div>
+
+              <div class="progress-item">
+                <div>
+                  <span>Entradas</span>
+                  <strong id="porcentajeEntradas"> 0% </strong>
+                </div>
+
+                <div class="progress">
+                  <div id="barraEntradas"></div>
+                </div>
+              </div>
+
+              <div class="progress-item">
+                <div>
+                  <span>Salidas</span>
+                  <strong id="porcentajeSalidas"> 0% </strong>
+                </div>
+
+                <div class="progress">
+                  <div id="barraSalidas"></div>
+                </div>
+              </div>
+
+              <div class="progress-item">
+                <div>
+                  <span>Transferencias</span>
+                  <strong id="porcentajeTransferencias"> 0% </strong>
+                </div>
+
+                <div class="progress">
+                  <div id="barraTransferencias"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================= -->
+        <!-- BODEGAS -->
+        <!-- ============================= -->
+
+        <div id="view-bodegas" class="view">
+          <div class="page-header">
+            <div>
+              <span class="eyebrow"> GESTIÓN </span>
+
+              <h1>Bodegas</h1>
+
+              <p>Administra las bodegas de LogiTrack.</p>
+            </div>
+
+            <button class="primary-btn" id="btnNuevaBodega">
+              + Nueva bodega
+            </button>
+          </div>
+
+          <div class="panel">
+            <div class="table-toolbar">
+              <input
+                type="text"
+                id="buscarBodega"
+                placeholder="Buscar bodega..."
+              />
+            </div>
+
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Ubicación</th>
+                    <th>Capacidad</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+
+                <tbody id="tablaBodegas"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================= -->
+        <!-- PRODUCTOS -->
+        <!-- ============================= -->
+
+        <div id="view-productos" class="view">
+          <div class="page-header">
+            <div>
+              <span class="eyebrow"> CATÁLOGO </span>
+
+              <h1>Productos</h1>
+
+              <p>Administra los productos registrados.</p>
+            </div>
+
+            <button class="primary-btn" id="btnNuevoProducto">
+              + Nuevo producto
+            </button>
+          </div>
+
+          <div class="panel">
+            <div class="table-toolbar">
+              <input
+                type="text"
+                id="buscarProducto"
+                placeholder="Buscar producto..."
+              />
+            </div>
+
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Categoría</th>
+                    <th>Precio</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+
+                <tbody id="tablaProductos"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================= -->
+        <!-- CATEGORÍAS -->
+        <!-- ============================= -->
+
+        <div id="view-categorias" class="view">
+          <div class="page-header">
+            <div>
+              <span class="eyebrow"> CATÁLOGO </span>
+
+              <h1>Categorías</h1>
+
+              <p>Organiza tus productos.</p>
+            </div>
+
+            <button class="primary-btn" id="btnNuevaCategoria">
+              + Nueva categoría
+            </button>
+          </div>
+
+          <div class="panel">
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+
+                <tbody id="tablaCategorias"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================= -->
+        <!-- INVENTARIO -->
+        <!-- ============================= -->
+
+        <div id="view-inventario" class="view">
+          <div class="page-header">
+            <div>
+              <span class="eyebrow"> STOCK </span>
+
+              <h1>Inventario</h1>
+
+              <p>Consulta las existencias por bodega.</p>
+            </div>
+
+            <button id="btnStockBajo" class="secondary-btn">
+              ⚠ Ver stock bajo
+            </button>
+          </div>
+
+          <div class="panel">
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Bodega</th>
+                    <th>Producto</th>
+                    <th>Stock</th>
+                    <th>Estado</th>
+                  </tr>
+                </thead>
+
+                <tbody id="tablaInventario"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================= -->
+        <!-- MOVIMIENTOS -->
+        <!-- ============================= -->
+
+        <div id="view-movimientos" class="view">
+          <div class="page-header">
+            <div>
+              <span class="eyebrow"> OPERACIONES </span>
+
+              <h1>Movimientos</h1>
+
+              <p>Registra y consulta movimientos de inventario.</p>
+            </div>
+
+            <button class="primary-btn" id="btnNuevoMovimiento">
+              + Registrar movimiento
+            </button>
+          </div>
+
+          <div class="panel">
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Fecha</th>
+                    <th>Tipo</th>
+                    <th>Usuario</th>
+                    <th>Observación</th>
+                  </tr>
+                </thead>
+
+                <tbody id="tablaMovimientos"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================= -->
+        <!-- REPORTES -->
+        <!-- ============================= -->
+
+        <div id="view-reportes" class="view">
+          <div class="page-header">
+            <div>
+              <span class="eyebrow"> ANALÍTICA </span>
+
+              <h1>Reportes</h1>
+
+              <p>Resumen de actividad del sistema.</p>
+            </div>
+          </div>
+
+          <div class="stats-grid report-stats">
+            <div class="stat-card">
+              <span>Total bodegas</span>
+              <strong id="reportBodegas">0</strong>
+            </div>
+
+            <div class="stat-card">
+              <span>Total productos</span>
+              <strong id="reportProductos">0</strong>
+            </div>
+
+            <div class="stat-card">
+              <span>Total movimientos</span>
+              <strong id="reportMovimientos">0</strong>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <div>
+                <span class="eyebrow"> DATOS </span>
+
+                <h2>Resumen JSON</h2>
+              </div>
+            </div>
+
+            <pre id="reporteJson"></pre>
+          </div>
+        </div>
+
+        <!-- =========================
+     AUDITORÍAS
+========================= -->
+        <div id="view-auditorias" class="view">
+          <div class="page-header">
+            <div>
+              <span class="eyebrow">SEGURIDAD</span>
+              <h1>Auditorías</h1>
+              <p>Historial de operaciones realizadas en el sistema.</p>
+            </div>
+          </div>
+
+          <!-- Filtros -->
+          <div class="panel auditoria-filtros">
+            <div class="form-group">
+              <label for="buscarAuditorias">Buscar</label>
+              <input
+                type="text"
+                id="buscarAuditorias"
+                placeholder="Buscar por usuario, entidad o ID..."
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="filtroAuditoriaOperacion">Operación</label>
+
+              <select id="filtroAuditoriaOperacion">
+                <option value="">Todas</option>
+                <option value="INSERT">INSERT</option>
+                <option value="UPDATE">UPDATE</option>
+                <option value="DELETE">DELETE</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="filtroAuditoriaEntidad">Entidad</label>
+
+              <select id="filtroAuditoriaEntidad">
+                <option value="">Todas</option>
+                <option value="Producto">Producto</option>
+                <option value="Bodega">Bodega</option>
+                <option value="Categoria">Categoría</option>
+                <option value="Movimiento">Movimiento</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Tabla -->
+          <div class="panel">
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Fecha</th>
+                    <th>Operación</th>
+                    <th>Entidad</th>
+                    <th>ID entidad</th>
+                    <th>Usuario</th>
+                    <th>Detalles</th>
+                  </tr>
+                </thead>
+
+                <tbody id="tablaAuditorias">
+                  <tr>
+                    <td colspan="7" class="empty-state">
+                      Cargando auditorías...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================= -->
+        <!-- MODAL -->
+        <!-- ============================= -->
+
+        <div id="modal" class="modal hidden">
+          <div class="modal-content">
+            <div class="modal-header">
+              <div>
+                <span class="eyebrow" id="modalEyebrow"> LOGITRACK </span>
+
+                <h2 id="modalTitle">Nueva operación</h2>
+              </div>
+
+              <button class="modal-close" id="modalClose">×</button>
+            </div>
+
+            <div id="modalBody"></div>
+          </div>
+        </div>
+      </main>
+    </section>
+
+    <script src="app.js"></script>
+  </body>
+</html>

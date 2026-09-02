@@ -1,7 +1,12 @@
 package com.logitrack.logitrack_backend.controller;
 
+import com.logitrack.logitrack_backend.model.Auditoria;
 import com.logitrack.logitrack_backend.model.Categoria;
+import com.logitrack.logitrack_backend.model.TipoOperacion;
+import com.logitrack.logitrack_backend.model.Usuario;
 import com.logitrack.logitrack_backend.repository.CategoriaRepository;
+import com.logitrack.logitrack_backend.service.AuditoriaService;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,9 +16,14 @@ import java.util.List;
 public class CategoriaController {
 
   private final CategoriaRepository categoriaRepository;
+  private final AuditoriaService auditoriaService;
 
-  public CategoriaController(CategoriaRepository categoriaRepository) {
+  public CategoriaController(
+    CategoriaRepository categoriaRepository,
+    AuditoriaService auditoriaService) {
+
     this.categoriaRepository = categoriaRepository;
+    this.auditoriaService = auditoriaService;
   }
 
   // GET /categorias
@@ -32,7 +42,27 @@ public class CategoriaController {
   // POST /categorias
   @PostMapping
   public Categoria crearCategoria(@RequestBody Categoria categoria) {
-    return categoriaRepository.save(categoria);
+
+    Categoria categoriaGuardada =
+      categoriaRepository.save(categoria);
+
+    Auditoria auditoria = new Auditoria();
+
+    auditoria.setTipoOperacion(TipoOperacion.INSERT);
+    auditoria.setEntidad("Categoria");
+    auditoria.setEntidadId(categoriaGuardada.getIdCategoria());
+
+    auditoria.setValoresNuevos(
+      "{\"nombre\":\"" + categoriaGuardada.getNombre() + "\"}"
+    );
+
+    Usuario usuario = new Usuario();
+    usuario.setIdusuario(1L);
+    auditoria.setUsuario(usuario);
+
+    auditoriaService.registrarAuditoria(auditoria);
+
+    return categoriaGuardada;
   }
 
   // PUT /categorias/1
@@ -44,14 +74,58 @@ public class CategoriaController {
     Categoria categoria = categoriaRepository.findById(id)
       .orElseThrow(() -> new RuntimeException("Categoria no encontrada"));
 
+    String valoresAnteriores =
+      "{\"nombre\":\"" + categoria.getNombre() + "\"}";
+
     categoria.setNombre(datos.getNombre());
 
-    return categoriaRepository.save(categoria);
+    Categoria categoriaActualizada =
+      categoriaRepository.save(categoria);
+
+    Auditoria auditoria = new Auditoria();
+
+    auditoria.setTipoOperacion(TipoOperacion.UPDATE);
+    auditoria.setEntidad("Categoria");
+    auditoria.setEntidadId(categoriaActualizada.getIdCategoria());
+
+    auditoria.setValoresAnteriores(valoresAnteriores);
+
+    auditoria.setValoresNuevos(
+      "{\"nombre\":\"" + categoriaActualizada.getNombre() + "\"}"
+    );
+
+    Usuario usuario = new Usuario();
+    usuario.setIdusuario(1L);
+    auditoria.setUsuario(usuario);
+
+    auditoriaService.registrarAuditoria(auditoria);
+
+    return categoriaActualizada;
   }
 
   // DELETE /categorias/1
   @DeleteMapping("/{id}")
   public void eliminarCategoria(@PathVariable Long id) {
+
+    Categoria categoria = categoriaRepository.findById(id)
+      .orElseThrow(() -> new RuntimeException("Categoria no encontrada"));
+
+    Auditoria auditoria = new Auditoria();
+
+    auditoria.setTipoOperacion(TipoOperacion.DELETE);
+    auditoria.setEntidad("Categoria");
+    auditoria.setEntidadId(categoria.getIdCategoria());
+
+    auditoria.setValoresAnteriores(
+      "{\"nombre\":\"" + categoria.getNombre() + "\"}"
+    );
+
+    Usuario usuario = new Usuario();
+    usuario.setIdusuario(1L);
+    auditoria.setUsuario(usuario);
+
     categoriaRepository.deleteById(id);
+
+    auditoriaService.registrarAuditoria(auditoria);
   }
 }
