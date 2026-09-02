@@ -21,29 +21,29 @@ const modalBody = document.getElementById("modalBody");
 // =====================================================
 
 function showDashboard() {
-  authSection.classList.add("hidden");
-  dashboard.classList.remove("hidden");
+    authSection.classList.add("hidden");
+    dashboard.classList.remove("hidden");
 
-  userInfo.classList.remove("hidden");
+    userInfo.classList.remove("hidden");
 
-  userName.textContent = userNombre || "Usuario";
-  userRole.textContent = userRol || "EMPLEADO";
+    userName.textContent = userNombre || "Usuario";
+    userRole.textContent = userRol || "EMPLEADO";
 
-  userAvatar.textContent = (userNombre || "U").charAt(0).toUpperCase();
+    userAvatar.textContent = (userNombre || "U").charAt(0).toUpperCase();
 
-  cargarBodegas();
-  cargarProductos();
-  cargarCategorias();
-  cargarInventario();
-  cargarMovimientos();
-  cargarReportes();
-  cargarAuditorias();
+    cargarBodegas();
+    cargarProductos();
+    cargarCategorias();
+    cargarInventario();
+    cargarMovimientos();
+    cargarReportes();
+    cargarAuditorias();
 }
 
 function showAuth() {
-  authSection.classList.remove("hidden");
-  dashboard.classList.add("hidden");
-  userInfo.classList.add("hidden");
+    authSection.classList.remove("hidden");
+    dashboard.classList.add("hidden");
+    userInfo.classList.add("hidden");
 }
 
 // =====================================================
@@ -51,19 +51,19 @@ function showAuth() {
 // =====================================================
 
 document.querySelectorAll(".tab-btn").forEach((btn) => {
-  btn.addEventListener("click", () => {
-    document
-      .querySelectorAll(".tab-btn")
-      .forEach((b) => b.classList.remove("active"));
+    btn.addEventListener("click", () => {
+        document
+            .querySelectorAll(".tab-btn")
+            .forEach((b) => b.classList.remove("active"));
 
-    document
-      .querySelectorAll(".tab-content")
-      .forEach((c) => c.classList.remove("active"));
+        document
+            .querySelectorAll(".tab-content")
+            .forEach((c) => c.classList.remove("active"));
 
-    btn.classList.add("active");
+        btn.classList.add("active");
 
-    document.getElementById(btn.dataset.tab + "Form").classList.add("active");
-  });
+        document.getElementById(btn.dataset.tab + "Form").classList.add("active");
+    });
 });
 
 // =====================================================
@@ -71,140 +71,80 @@ document.querySelectorAll(".tab-btn").forEach((btn) => {
 // =====================================================
 
 document.getElementById("loginForm").addEventListener("submit", async (e) => {
-  e.preventDefault();
-
-  const email = document.getElementById("loginEmail").value;
-
-  const password = document.getElementById("loginPassword").value;
-
-  const errorEl = document.getElementById("loginError");
-
-  errorEl.textContent = "";
-
-  try {
-    const res = await fetch(`${API_BASE}/auth/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email,
-        password,
-      }),
-    });
-
-    if (!res.ok) {
-      const err = await res.json();
-
-      throw new Error(err.message || "Error al iniciar sesión");
-    }
-
-    const data = await res.json();
-
-    token = data.token;
-userNombre = data.nombre;
-userRol = data.rol || "EMPLEADO";
-
-localStorage.setItem(
-    "logitrack_token",
-    token
-);
-
-localStorage.setItem(
-    "logitrack_nombre",
-    userNombre
-);
-
-localStorage.setItem(
-    "logitrack_rol",
-    userRol
-);
-
-localStorage.setItem(
-    "logitrack_usuario_id",
-    data.idusuario
-);
-
-    showDashboard();
-  } catch (err) {
-    errorEl.textContent = err.message;
-  }
-});
-
-// =====================================================
-// REGISTRO
-// =====================================================
-
-document
-  .getElementById("registerForm")
-  .addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const body = {
-      nombre: document.getElementById("regNombre").value,
+    const email = document.getElementById("loginEmail").value;
 
-      apellido: document.getElementById("regApellido").value,
+    const password = document.getElementById("loginPassword").value;
 
-      email: document.getElementById("regEmail").value,
-
-      password: document.getElementById("regPassword").value,
-
-      rol: document.getElementById("regRol").value,
-    };
-
-    const errorEl = document.getElementById("registerError");
+    const errorEl = document.getElementById("loginError");
 
     errorEl.textContent = "";
 
     try {
-      const res = await fetch(`${API_BASE}/auth/register`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(body),
-      });
+        const res = await fetch(`${API_BASE}/auth/login`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                email,
+                password,
+            }),
+        });
 
-      if (!res.ok) {
-        const err = await res.json();
+        if (!res.ok) {
+            const err = await res.json();
 
-        throw new Error(err.message || "Error al registrarse");
-      }
+            throw new Error(err.message || "Error al iniciar sesión");
+        }
 
-      const data = await res.json();
+        const data = await res.json();
 
-      token = data.token;
-      userNombre = data.nombre;
-      userRol = data.rol || "EMPLEADO";
+        token = data.token;
+        userNombre = data.nombre;
+        userRol = data.rol || "EMPLEADO";
 
-      localStorage.setItem("logitrack_token", token);
+        localStorage.setItem(
+            "logitrack_token",
+            token
+        );
 
-      localStorage.setItem("logitrack_nombre", userNombre);
+        localStorage.setItem(
+            "logitrack_nombre",
+            userNombre
+        );
 
-      localStorage.setItem("logitrack_rol", userRol);
+        localStorage.setItem(
+            "logitrack_rol",
+            userRol
+        );
 
-      localStorage.setItem("logitrack_usuario_id", data.idusuario);
+        localStorage.setItem(
+            "logitrack_usuario_id",
+            data.idusuario
+        );
 
-      showDashboard();
+        showDashboard();
     } catch (err) {
-      errorEl.textContent = err.message;
+        errorEl.textContent = err.message;
     }
-  });
+});
 
 // =====================================================
 // LOGOUT
 // =====================================================
 
 document.getElementById("btnLogout").addEventListener("click", () => {
-  localStorage.removeItem("logitrack_token");
-  localStorage.removeItem("logitrack_nombre");
-  localStorage.removeItem("logitrack_rol");
+    localStorage.removeItem("logitrack_token");
+    localStorage.removeItem("logitrack_nombre");
+    localStorage.removeItem("logitrack_rol");
 
-  token = null;
-  userNombre = null;
-  userRol = null;
+    token = null;
+    userNombre = null;
+    userRol = null;
 
-  showAuth();
+    showAuth();
 });
 
 // =====================================================
@@ -212,54 +152,58 @@ document.getElementById("btnLogout").addEventListener("click", () => {
 // =====================================================
 
 document.querySelectorAll(".menu-btn").forEach((btn) => {
-  btn.addEventListener("click", () => {
-    document
-      .querySelectorAll(".menu-btn")
-      .forEach((b) => b.classList.remove("active"));
+    btn.addEventListener("click", () => {
+        document
+            .querySelectorAll(".menu-btn")
+            .forEach((b) => b.classList.remove("active"));
 
-    document
-      .querySelectorAll(".view")
-      .forEach((v) => v.classList.remove("active"));
+        document
+            .querySelectorAll(".view")
+            .forEach((v) => v.classList.remove("active"));
 
-    btn.classList.add("active");
+        btn.classList.add("active");
 
-    document.getElementById("view-" + btn.dataset.view).classList.add("active");
+        document.getElementById("view-" + btn.dataset.view).classList.add("active");
 
-    switch (btn.dataset.view) {
-      case "inicio":
-        cargarReportes();
-        break;
+        switch (btn.dataset.view) {
+            case "inicio":
+                cargarReportes();
+                break;
 
-      case "bodegas":
-        cargarBodegas();
-        break;
+            case "bodegas":
+                cargarBodegas();
+                break;
 
-      case "productos":
-        cargarProductos();
-        break;
+            case "productos":
+                cargarProductos();
+                break;
 
-      case "categorias":
-        cargarCategorias();
-        break;
+            case "categorias":
+                cargarCategorias();
+                break;
 
-      case "inventario":
-        cargarInventario();
-        break;
+            case "inventario":
+                cargarInventario();
+                break;
 
-      case "movimientos":
-        cargarMovimientos();
-        break;
+            case "movimientos":
+                cargarMovimientos();
+                break;
 
-      case "reportes":
-        cargarReportes();
-        break;
+            case "reportes":
+                cargarReportes();
+                break;
 
-      case "auditorias":
-        cargarAuditorias();
-        break;
-    }
-    
-  });
+            case "auditorias":
+                cargarAuditorias();
+                break;
+            
+            case "usuarios":
+                cargarUsuarios();
+                break;
+        }   
+
+    });
 });
 
 // =====================================================
@@ -300,21 +244,21 @@ async function apiGet(path) {
 let bodegasData = [];
 
 async function cargarBodegas() {
-  try {
-    bodegasData = await apiGet("/bodegas");
+    try {
+        bodegasData = await apiGet("/bodegas");
 
-    renderBodegas(bodegasData);
-  } catch (e) {
-    console.error(e);
-  }
+        renderBodegas(bodegasData);
+    } catch (e) {
+        console.error(e);
+    }
 }
 
 function renderBodegas(data) {
-  const tabla = document.getElementById("tablaBodegas");
+    const tabla = document.getElementById("tablaBodegas");
 
-  tabla.innerHTML = data
-    .map(
-      (b) => `
+    tabla.innerHTML = data
+        .map(
+            (b) => `
 
         <tr>
 
@@ -327,8 +271,7 @@ function renderBodegas(data) {
             <td>${b.capacidad}</td>
 
             <td>
-                <span class="badge ${
-                  b.activo ? "badge-success" : "badge-danger"
+                <span class="badge ${b.activo ? "badge-success" : "badge-danger"
                 }">
                     ${b.activo ? "Activa" : "Inactiva"}
                 </span>
@@ -355,8 +298,8 @@ function renderBodegas(data) {
         </tr>
 
     `,
-    )
-    .join("");
+        )
+        .join("");
 }
 
 // =====================================================
@@ -366,21 +309,21 @@ function renderBodegas(data) {
 let productosData = [];
 
 async function cargarProductos() {
-  try {
-    productosData = await apiGet("/productos");
+    try {
+        productosData = await apiGet("/productos");
 
-    renderProductos(productosData);
-  } catch (e) {
-    console.error(e);
-  }
+        renderProductos(productosData);
+    } catch (e) {
+        console.error(e);
+    }
 }
 
 function renderProductos(data) {
-  const tabla = document.getElementById("tablaProductos");
+    const tabla = document.getElementById("tablaProductos");
 
-  tabla.innerHTML = data
-    .map(
-      (p) => `
+    tabla.innerHTML = data
+        .map(
+            (p) => `
 
         <tr>
 
@@ -398,8 +341,7 @@ function renderProductos(data) {
 
             <td>
 
-                <span class="badge ${
-                  p.activo ? "badge-success" : "badge-danger"
+                <span class="badge ${p.activo ? "badge-success" : "badge-danger"
                 }">
 
                     ${p.activo ? "Activo" : "Inactivo"}
@@ -429,8 +371,8 @@ function renderProductos(data) {
         </tr>
 
     `,
-    )
-    .join("");
+        )
+        .join("");
 }
 
 // =====================================================
@@ -438,19 +380,19 @@ function renderProductos(data) {
 // =====================================================
 
 async function cargarCategorias() {
-  try {
-    const data = await apiGet("/categorias");
+    try {
+        const data = await apiGet("/categorias");
 
-    renderCategorias(data);
-  } catch (e) {
-    console.error(e);
-  }
+        renderCategorias(data);
+    } catch (e) {
+        console.error(e);
+    }
 }
 
 function renderCategorias(data) {
-  document.getElementById("tablaCategorias").innerHTML = data
-    .map(
-      (c) => `
+    document.getElementById("tablaCategorias").innerHTML = data
+        .map(
+            (c) => `
 
         <tr>
 
@@ -479,8 +421,8 @@ function renderCategorias(data) {
         </tr>
 
     `,
-    )
-    .join("");
+        )
+        .join("");
 }
 
 // =====================================================
@@ -488,34 +430,34 @@ function renderCategorias(data) {
 // =====================================================
 
 async function cargarInventario() {
-  try {
-    const data = await apiGet("/inventario");
+    try {
+        const data = await apiGet("/inventario");
 
-    renderInventario(data);
-  } catch (e) {
-    console.error(e);
-  }
+        renderInventario(data);
+    } catch (e) {
+        console.error(e);
+    }
 }
 
 function renderInventario(data) {
-  document.getElementById("tablaInventario").innerHTML = data
-    .map((i) => {
-      const stock = i.stock || 0;
+    document.getElementById("tablaInventario").innerHTML = data
+        .map((i) => {
+            const stock = i.stock || 0;
 
-      let estado = "Normal";
-      let clase = "badge-success";
+            let estado = "Normal";
+            let clase = "badge-success";
 
-      if (stock < 10) {
-        estado = "Stock bajo";
-        clase = "badge-warning";
-      }
+            if (stock < 10) {
+                estado = "Stock bajo";
+                clase = "badge-warning";
+            }
 
-      if (stock === 0) {
-        estado = "Agotado";
-        clase = "badge-danger";
-      }
+            if (stock === 0) {
+                estado = "Agotado";
+                clase = "badge-danger";
+            }
 
-      return `
+            return `
 
             <tr>
 
@@ -540,18 +482,18 @@ function renderInventario(data) {
             </tr>
 
         `;
-    })
-    .join("");
+        })
+        .join("");
 }
 
 document.getElementById("btnStockBajo").addEventListener("click", async () => {
-  try {
-    const data = await apiGet("/inventario/stock-bajo?umbral=10");
+    try {
+        const data = await apiGet("/inventario/stock-bajo?umbral=10");
 
-    renderInventario(data);
-  } catch (e) {
-    console.error(e);
-  }
+        renderInventario(data);
+    } catch (e) {
+        console.error(e);
+    }
 });
 
 // =====================================================
@@ -559,18 +501,18 @@ document.getElementById("btnStockBajo").addEventListener("click", async () => {
 // =====================================================
 
 async function cargarMovimientos() {
-  try {
-    const data = await apiGet("/movimientos");
+    try {
+        const data = await apiGet("/movimientos");
 
-    document.getElementById("tablaMovimientos").innerHTML = data
-      .map((m) => {
-        let clase = "badge-success";
+        document.getElementById("tablaMovimientos").innerHTML = data
+            .map((m) => {
+                let clase = "badge-success";
 
-        if (m.tipo === "SALIDA") clase = "badge-danger";
+                if (m.tipo === "SALIDA") clase = "badge-danger";
 
-        if (m.tipo === "TRANSFERENCIA") clase = "badge-warning";
+                if (m.tipo === "TRANSFERENCIA") clase = "badge-warning";
 
-        return `
+                return `
 
                 <tr>
 
@@ -597,11 +539,11 @@ async function cargarMovimientos() {
                 </tr>
 
             `;
-      })
-      .join("");
-  } catch (e) {
-    console.error(e);
-  }
+            })
+            .join("");
+    } catch (e) {
+        console.error(e);
+    }
 }
 
 // =====================================================
@@ -609,64 +551,64 @@ async function cargarMovimientos() {
 // =====================================================
 
 async function cargarReportes() {
-  try {
-    const datos = await apiGet("/reportes/resumen");
+    try {
+        const datos = await apiGet("/reportes/resumen");
 
-    document.getElementById("dashBodegas").textContent = datos.totalBodegas;
+        document.getElementById("dashBodegas").textContent = datos.totalBodegas;
 
-    document.getElementById("dashProductos").textContent = datos.totalProductos;
+        document.getElementById("dashProductos").textContent = datos.totalProductos;
 
-    document.getElementById("dashInventarios").textContent =
-      datos.totalInventarios;
+        document.getElementById("dashInventarios").textContent =
+            datos.totalInventarios;
 
-    document.getElementById("dashMovimientos").textContent =
-      datos.totalMovimientos;
+        document.getElementById("dashMovimientos").textContent =
+            datos.totalMovimientos;
 
-    document.getElementById("dashEntradas").textContent = datos.entradas;
+        document.getElementById("dashEntradas").textContent = datos.entradas;
 
-    document.getElementById("dashSalidas").textContent = datos.salidas;
+        document.getElementById("dashSalidas").textContent = datos.salidas;
 
-    document.getElementById("dashTransferencias").textContent =
-      datos.transferencias;
+        document.getElementById("dashTransferencias").textContent =
+            datos.transferencias;
 
-    const total = datos.totalMovimientos || 1;
+        const total = datos.totalMovimientos || 1;
 
-    const entradas = Math.round((datos.entradas / total) * 100);
+        const entradas = Math.round((datos.entradas / total) * 100);
 
-    const salidas = Math.round((datos.salidas / total) * 100);
+        const salidas = Math.round((datos.salidas / total) * 100);
 
-    const transferencias = Math.round((datos.transferencias / total) * 100);
+        const transferencias = Math.round((datos.transferencias / total) * 100);
 
-    document.getElementById("porcentajeEntradas").textContent = entradas + "%";
+        document.getElementById("porcentajeEntradas").textContent = entradas + "%";
 
-    document.getElementById("porcentajeSalidas").textContent = salidas + "%";
+        document.getElementById("porcentajeSalidas").textContent = salidas + "%";
 
-    document.getElementById("porcentajeTransferencias").textContent =
-      transferencias + "%";
+        document.getElementById("porcentajeTransferencias").textContent =
+            transferencias + "%";
 
-    document.getElementById("barraEntradas").style.width = entradas + "%";
+        document.getElementById("barraEntradas").style.width = entradas + "%";
 
-    document.getElementById("barraSalidas").style.width = salidas + "%";
+        document.getElementById("barraSalidas").style.width = salidas + "%";
 
-    document.getElementById("barraTransferencias").style.width =
-      transferencias + "%";
+        document.getElementById("barraTransferencias").style.width =
+            transferencias + "%";
 
-    document.getElementById("reportBodegas").textContent = datos.totalBodegas;
+        document.getElementById("reportBodegas").textContent = datos.totalBodegas;
 
-    document.getElementById("reportProductos").textContent =
-      datos.totalProductos;
+        document.getElementById("reportProductos").textContent =
+            datos.totalProductos;
 
-    document.getElementById("reportMovimientos").textContent =
-      datos.totalMovimientos;
+        document.getElementById("reportMovimientos").textContent =
+            datos.totalMovimientos;
 
-    document.getElementById("reporteJson").textContent = JSON.stringify(
-      datos,
-      null,
-      2,
-    );
-  } catch (e) {
-    console.error("Error cargando reportes:", e);
-  }
+        document.getElementById("reporteJson").textContent = JSON.stringify(
+            datos,
+            null,
+            2,
+        );
+    } catch (e) {
+        console.error("Error cargando reportes:", e);
+    }
 }
 
 // =====================================================
@@ -674,25 +616,25 @@ async function cargarReportes() {
 // =====================================================
 
 function abrirModal(title, html) {
-  modalTitle.textContent = title;
+    modalTitle.textContent = title;
 
-  modalBody.innerHTML = `<div class="modal-form">${html}</div>`;
+    modalBody.innerHTML = `<div class="modal-form">${html}</div>`;
 
-  modal.classList.remove("hidden");
+    modal.classList.remove("hidden");
 }
 
 function cerrarModal() {
-  modal.classList.add("hidden");
+    modal.classList.add("hidden");
 
-  modalBody.innerHTML = "";
+    modalBody.innerHTML = "";
 }
 
 document.getElementById("modalClose").addEventListener("click", cerrarModal);
 
 modal.addEventListener("click", (e) => {
-  if (e.target === modal) {
-    cerrarModal();
-  }
+    if (e.target === modal) {
+        cerrarModal();
+    }
 });
 
 // =====================================================
@@ -706,29 +648,29 @@ const themeIcon = document.getElementById("themeIcon");
 const themeText = document.getElementById("themeText");
 
 function cargarTema() {
-  const tema = localStorage.getItem("logitrack_theme");
+    const tema = localStorage.getItem("logitrack_theme");
 
-  if (tema === "light") {
-    document.body.classList.add("light");
+    if (tema === "light") {
+        document.body.classList.add("light");
 
-    themeIcon.textContent = "◐";
-    themeText.textContent = "Modo oscuro";
-  } else {
-    document.body.classList.remove("light");
+        themeIcon.textContent = "◐";
+        themeText.textContent = "Modo oscuro";
+    } else {
+        document.body.classList.remove("light");
 
-    themeIcon.textContent = "☀";
-    themeText.textContent = "Modo claro";
-  }
+        themeIcon.textContent = "☀";
+        themeText.textContent = "Modo claro";
+    }
 }
 
 themeToggle.addEventListener("click", () => {
-  const light = document.body.classList.toggle("light");
+    const light = document.body.classList.toggle("light");
 
-  localStorage.setItem("logitrack_theme", light ? "light" : "dark");
+    localStorage.setItem("logitrack_theme", light ? "light" : "dark");
 
-  themeIcon.textContent = light ? "◐" : "☀";
+    themeIcon.textContent = light ? "◐" : "☀";
 
-  themeText.textContent = light ? "Modo oscuro" : "Modo claro";
+    themeText.textContent = light ? "Modo oscuro" : "Modo claro";
 });
 
 // =====================================================
@@ -736,23 +678,23 @@ themeToggle.addEventListener("click", () => {
 // =====================================================
 
 document.getElementById("buscarBodega").addEventListener("input", (e) => {
-  const texto = e.target.value.toLowerCase();
+    const texto = e.target.value.toLowerCase();
 
-  renderBodegas(
-    bodegasData.filter(
-      (b) =>
-        b.nombre.toLowerCase().includes(texto) ||
-        b.ubicacion.toLowerCase().includes(texto),
-    ),
-  );
+    renderBodegas(
+        bodegasData.filter(
+            (b) =>
+                b.nombre.toLowerCase().includes(texto) ||
+                b.ubicacion.toLowerCase().includes(texto),
+        ),
+    );
 });
 
 document.getElementById("buscarProducto").addEventListener("input", (e) => {
-  const texto = e.target.value.toLowerCase();
+    const texto = e.target.value.toLowerCase();
 
-  renderProductos(
-    productosData.filter((p) => p.nombre.toLowerCase().includes(texto)),
-  );
+    renderProductos(
+        productosData.filter((p) => p.nombre.toLowerCase().includes(texto)),
+    );
 });
 
 // =====================================================
@@ -760,9 +702,9 @@ document.getElementById("buscarProducto").addEventListener("input", (e) => {
 // =====================================================
 
 document.getElementById("btnNuevaBodega").addEventListener("click", () =>
-  abrirModal(
-    "Nueva bodega",
-    `
+    abrirModal(
+        "Nueva bodega",
+        `
             <label>Nombre</label>
             <input id="modalBodegaNombre">
 
@@ -782,13 +724,13 @@ document.getElementById("btnNuevaBodega").addEventListener("click", () =>
                 Crear bodega
             </button>
             `,
-  ),
+    ),
 );
 
 document.getElementById("btnNuevaCategoria").addEventListener("click", () =>
-  abrirModal(
-    "Nueva categoría",
-    `
+    abrirModal(
+        "Nueva categoría",
+        `
             <label>Nombre</label>
 
             <input id="modalCategoriaNombre">
@@ -800,7 +742,7 @@ document.getElementById("btnNuevaCategoria").addEventListener("click", () =>
                 Crear categoría
             </button>
             `,
-  ),
+    ),
 );
 
 // =====================================================
@@ -808,38 +750,38 @@ document.getElementById("btnNuevaCategoria").addEventListener("click", () =>
 // =====================================================
 
 async function crearBodega() {
-  const body = {
-    nombre: document.getElementById("modalBodegaNombre").value,
+    const body = {
+        nombre: document.getElementById("modalBodegaNombre").value,
 
-    ubicacion: document.getElementById("modalBodegaUbicacion").value,
+        ubicacion: document.getElementById("modalBodegaUbicacion").value,
 
-    capacidad: Number(document.getElementById("modalBodegaCapacidad").value),
+        capacidad: Number(document.getElementById("modalBodegaCapacidad").value),
 
-    activo: true,
-  };
+        activo: true,
+    };
 
-  try {
-    const res = await fetch(`${API_BASE}/bodegas`, {
-      method: "POST",
+    try {
+        const res = await fetch(`${API_BASE}/bodegas`, {
+            method: "POST",
 
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
 
-      body: JSON.stringify(body),
-    });
+            body: JSON.stringify(body),
+        });
 
-    if (!res.ok) throw new Error("No se pudo crear la bodega");
+        if (!res.ok) throw new Error("No se pudo crear la bodega");
 
-    cerrarModal();
+        cerrarModal();
 
-    cargarBodegas();
+        cargarBodegas();
 
-    cargarReportes();
-  } catch (e) {
-    alert(e.message);
-  }
+        cargarReportes();
+    } catch (e) {
+        alert(e.message);
+    }
 }
 
 // =====================================================
@@ -847,24 +789,24 @@ async function crearBodega() {
 // =====================================================
 
 async function eliminarBodega(id) {
-  if (!confirm("¿Seguro que deseas eliminar esta bodega?")) return;
+    if (!confirm("¿Seguro que deseas eliminar esta bodega?")) return;
 
-  try {
-    const res = await fetch(`${API_BASE}/bodegas/${id}`, {
-      method: "DELETE",
+    try {
+        const res = await fetch(`${API_BASE}/bodegas/${id}`, {
+            method: "DELETE",
 
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
 
-    if (!res.ok) throw new Error("No se pudo eliminar");
+        if (!res.ok) throw new Error("No se pudo eliminar");
 
-    cargarBodegas();
-    cargarReportes();
-  } catch (e) {
-    alert(e.message);
-  }
+        cargarBodegas();
+        cargarReportes();
+    } catch (e) {
+        alert(e.message);
+    }
 }
 
 // =====================================================
@@ -872,14 +814,14 @@ async function eliminarBodega(id) {
 // =====================================================
 
 async function editarBodega(id) {
-  const b = bodegasData.find((x) => x.idBodega === id);
+    const b = bodegasData.find((x) => x.idBodega === id);
 
-  if (!b) return;
+    if (!b) return;
 
-  abrirModal(
-    "Editar bodega",
+    abrirModal(
+        "Editar bodega",
 
-    `
+        `
         <label>Nombre</label>
 
         <input
@@ -909,40 +851,40 @@ async function editarBodega(id) {
             Guardar cambios
         </button>
         `,
-  );
+    );
 }
 
 async function guardarBodega(id) {
-  const body = {
-    nombre: document.getElementById("modalBodegaNombre").value,
+    const body = {
+        nombre: document.getElementById("modalBodegaNombre").value,
 
-    ubicacion: document.getElementById("modalBodegaUbicacion").value,
+        ubicacion: document.getElementById("modalBodegaUbicacion").value,
 
-    capacidad: Number(document.getElementById("modalBodegaCapacidad").value),
+        capacidad: Number(document.getElementById("modalBodegaCapacidad").value),
 
-    activo: true,
-  };
+        activo: true,
+    };
 
-  try {
-    const res = await fetch(`${API_BASE}/bodegas/${id}`, {
-      method: "PUT",
+    try {
+        const res = await fetch(`${API_BASE}/bodegas/${id}`, {
+            method: "PUT",
 
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
 
-      body: JSON.stringify(body),
-    });
+            body: JSON.stringify(body),
+        });
 
-    if (!res.ok) throw new Error("No se pudo actualizar");
+        if (!res.ok) throw new Error("No se pudo actualizar");
 
-    cerrarModal();
+        cerrarModal();
 
-    cargarBodegas();
-  } catch (e) {
-    alert(e.message);
-  }
+        cargarBodegas();
+    } catch (e) {
+        alert(e.message);
+    }
 }
 
 // =====================================================
@@ -950,30 +892,30 @@ async function guardarBodega(id) {
 // =====================================================
 
 async function crearCategoria() {
-  const nombre = document.getElementById("modalCategoriaNombre").value;
+    const nombre = document.getElementById("modalCategoriaNombre").value;
 
-  try {
-    const res = await fetch(`${API_BASE}/categorias`, {
-      method: "POST",
+    try {
+        const res = await fetch(`${API_BASE}/categorias`, {
+            method: "POST",
 
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
 
-      body: JSON.stringify({
-        nombre,
-      }),
-    });
+            body: JSON.stringify({
+                nombre,
+            }),
+        });
 
-    if (!res.ok) throw new Error("No se pudo crear la categoría");
+        if (!res.ok) throw new Error("No se pudo crear la categoría");
 
-    cerrarModal();
+        cerrarModal();
 
-    cargarCategorias();
-  } catch (e) {
-    alert(e.message);
-  }
+        cargarCategorias();
+    } catch (e) {
+        alert(e.message);
+    }
 }
 
 // =====================================================
@@ -981,16 +923,16 @@ async function crearCategoria() {
 // =====================================================
 
 async function editarCategoria(id) {
-  const categorias = await apiGet("/categorias");
+    const categorias = await apiGet("/categorias");
 
-  const categoria = categorias.find((c) => c.idCategoria === id);
+    const categoria = categorias.find((c) => c.idCategoria === id);
 
-  if (!categoria) return;
+    if (!categoria) return;
 
-  abrirModal(
-    "Editar categoría",
+    abrirModal(
+        "Editar categoría",
 
-    `
+        `
         <label>Nombre</label>
 
         <input
@@ -1005,54 +947,54 @@ async function editarCategoria(id) {
             Guardar cambios
         </button>
         `,
-  );
+    );
 }
 
 async function guardarCategoria(id) {
-  const nombre = document.getElementById("modalCategoriaNombre").value;
+    const nombre = document.getElementById("modalCategoriaNombre").value;
 
-  try {
-    const res = await fetch(`${API_BASE}/categorias/${id}`, {
-      method: "PUT",
+    try {
+        const res = await fetch(`${API_BASE}/categorias/${id}`, {
+            method: "PUT",
 
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
 
-      body: JSON.stringify({
-        nombre,
-      }),
-    });
+            body: JSON.stringify({
+                nombre,
+            }),
+        });
 
-    if (!res.ok) throw new Error("No se pudo actualizar");
+        if (!res.ok) throw new Error("No se pudo actualizar");
 
-    cerrarModal();
+        cerrarModal();
 
-    cargarCategorias();
-  } catch (e) {
-    alert(e.message);
-  }
+        cargarCategorias();
+    } catch (e) {
+        alert(e.message);
+    }
 }
 
 async function eliminarCategoria(id) {
-  if (!confirm("¿Eliminar esta categoría?")) return;
+    if (!confirm("¿Eliminar esta categoría?")) return;
 
-  try {
-    const res = await fetch(`${API_BASE}/categorias/${id}`, {
-      method: "DELETE",
+    try {
+        const res = await fetch(`${API_BASE}/categorias/${id}`, {
+            method: "DELETE",
 
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
 
-    if (!res.ok) throw new Error("No se pudo eliminar");
+        if (!res.ok) throw new Error("No se pudo eliminar");
 
-    cargarCategorias();
-  } catch (e) {
-    alert(e.message);
-  }
+        cargarCategorias();
+    } catch (e) {
+        alert(e.message);
+    }
 }
 
 // =====================================================
@@ -1060,26 +1002,26 @@ async function eliminarCategoria(id) {
 // =====================================================
 
 document
-  .getElementById("btnNuevoProducto")
-  .addEventListener("click", async () => {
-    const categorias = await apiGet("/categorias");
+    .getElementById("btnNuevoProducto")
+    .addEventListener("click", async () => {
+        const categorias = await apiGet("/categorias");
 
-    const opciones = categorias
-      .map(
-        (c) => `
+        const opciones = categorias
+            .map(
+                (c) => `
                     <option
                         value="${c.idCategoria}"
                     >
                         ${c.nombre}
                     </option>
                 `,
-      )
-      .join("");
+            )
+            .join("");
 
-    abrirModal(
-      "Nuevo producto",
+        abrirModal(
+            "Nuevo producto",
 
-      `
+            `
                 <label>Nombre</label>
 
                 <input id="modalProductoNombre">
@@ -1115,88 +1057,87 @@ document
                     Crear producto
                 </button>
                 `,
-    );
-  });
-
-async function crearProducto() {
-  const body = {
-    nombre: document.getElementById("modalProductoNombre").value,
-
-    categoria: {
-      idCategoria: Number(
-        document.getElementById("modalProductoCategoria").value,
-      ),
-    },
-
-    precio: Number(document.getElementById("modalProductoPrecio").value),
-
-    descripcion: document.getElementById("modalProductoDescripcion").value,
-
-    activo: true,
-  };
-
-  try {
-    const res = await fetch(`${API_BASE}/productos`, {
-      method: "POST",
-
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-
-      body: JSON.stringify(body),
+        );
     });
 
-    if (!res.ok) throw new Error("No se pudo crear el producto");
+async function crearProducto() {
+    const body = {
+        nombre: document.getElementById("modalProductoNombre").value,
 
-    cerrarModal();
+        categoria: {
+            idCategoria: Number(
+                document.getElementById("modalProductoCategoria").value,
+            ),
+        },
 
-    cargarProductos();
+        precio: Number(document.getElementById("modalProductoPrecio").value),
 
-    cargarReportes();
-  } catch (e) {
-    alert(e.message);
-  }
+        descripcion: document.getElementById("modalProductoDescripcion").value,
+
+        activo: true,
+    };
+
+    try {
+        const res = await fetch(`${API_BASE}/productos`, {
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+
+            body: JSON.stringify(body),
+        });
+
+        if (!res.ok) throw new Error("No se pudo crear el producto");
+
+        cerrarModal();
+
+        cargarProductos();
+
+        cargarReportes();
+    } catch (e) {
+        alert(e.message);
+    }
 }
 
 async function eliminarProducto(id) {
-  if (!confirm("¿Eliminar este producto?")) return;
+    if (!confirm("¿Eliminar este producto?")) return;
 
-  try {
-    const res = await fetch(`${API_BASE}/productos/${id}`, {
-      method: "DELETE",
+    try {
+        const res = await fetch(`${API_BASE}/productos/${id}`, {
+            method: "DELETE",
 
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
 
-    if (!res.ok) throw new Error("No se pudo eliminar");
+        if (!res.ok) throw new Error("No se pudo eliminar");
 
-    cargarProductos();
+        cargarProductos();
 
-    cargarReportes();
-  } catch (e) {
-    alert(e.message);
-  }
+        cargarReportes();
+    } catch (e) {
+        alert(e.message);
+    }
 }
 
 async function editarProducto(id) {
-  const producto = productosData.find((p) => p.idProducto === id);
+    const producto = productosData.find((p) => p.idProducto === id);
 
-  if (!producto) return;
+    if (!producto) return;
 
-  const categorias = await apiGet("/categorias");
+    const categorias = await apiGet("/categorias");
 
-  const opciones = categorias
-    .map(
-      (c) => `
+    const opciones = categorias
+        .map(
+            (c) => `
 
             <option
                 value="${c.idCategoria}"
-                ${
-                  producto.categoria &&
-                  producto.categoria.idCategoria === c.idCategoria
+                ${producto.categoria &&
+                    producto.categoria.idCategoria === c.idCategoria
                     ? "selected"
                     : ""
                 }
@@ -1205,13 +1146,13 @@ async function editarProducto(id) {
             </option>
 
         `,
-    )
-    .join("");
+        )
+        .join("");
 
-  abrirModal(
-    "Editar producto",
+    abrirModal(
+        "Editar producto",
 
-    `
+        `
         <label>Nombre</label>
 
         <input
@@ -1254,46 +1195,46 @@ async function editarProducto(id) {
             Guardar cambios
         </button>
         `,
-  );
+    );
 }
 
 async function guardarProducto(id) {
-  const body = {
-    nombre: document.getElementById("modalProductoNombre").value,
+    const body = {
+        nombre: document.getElementById("modalProductoNombre").value,
 
-    categoria: {
-      idCategoria: Number(
-        document.getElementById("modalProductoCategoria").value,
-      ),
-    },
+        categoria: {
+            idCategoria: Number(
+                document.getElementById("modalProductoCategoria").value,
+            ),
+        },
 
-    precio: Number(document.getElementById("modalProductoPrecio").value),
+        precio: Number(document.getElementById("modalProductoPrecio").value),
 
-    descripcion: document.getElementById("modalProductoDescripcion").value,
+        descripcion: document.getElementById("modalProductoDescripcion").value,
 
-    activo: true,
-  };
+        activo: true,
+    };
 
-  try {
-    const res = await fetch(`${API_BASE}/productos/${id}`, {
-      method: "PUT",
+    try {
+        const res = await fetch(`${API_BASE}/productos/${id}`, {
+            method: "PUT",
 
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
 
-      body: JSON.stringify(body),
-    });
+            body: JSON.stringify(body),
+        });
 
-    if (!res.ok) throw new Error("No se pudo actualizar");
+        if (!res.ok) throw new Error("No se pudo actualizar");
 
-    cerrarModal();
+        cerrarModal();
 
-    cargarProductos();
-  } catch (e) {
-    alert(e.message);
-  }
+        cargarProductos();
+    } catch (e) {
+        alert(e.message);
+    }
 }
 
 // =====================================================
@@ -1303,9 +1244,9 @@ async function guardarProducto(id) {
 cargarTema();
 
 if (token) {
-  showDashboard();
+    showDashboard();
 } else {
-  showAuth();
+    showAuth();
 }
 
 /* =========================================
@@ -1317,43 +1258,43 @@ const sidebar = document.querySelector(".sidebar");
 const sidebarOverlay = document.getElementById("sidebarOverlay");
 
 function abrirMenuMobile() {
-  sidebar.classList.add("mobile-open");
+    sidebar.classList.add("mobile-open");
 
-  sidebarOverlay.classList.add("active");
+    sidebarOverlay.classList.add("active");
 
-  mobileMenuBtn.classList.add("menu-open");
+    mobileMenuBtn.classList.add("menu-open");
 
-  mobileMenuBtn.textContent = "‹";
+    mobileMenuBtn.textContent = "‹";
 }
 
 function cerrarMenuMobile() {
-  sidebar.classList.remove("mobile-open");
+    sidebar.classList.remove("mobile-open");
 
-  sidebarOverlay.classList.remove("active");
+    sidebarOverlay.classList.remove("active");
 
-  mobileMenuBtn.classList.remove("menu-open");
+    mobileMenuBtn.classList.remove("menu-open");
 
-  mobileMenuBtn.textContent = "☰";
+    mobileMenuBtn.textContent = "☰";
 }
 
 mobileMenuBtn.addEventListener("click", () => {
-  if (sidebar.classList.contains("mobile-open")) {
-    cerrarMenuMobile();
-  } else {
-    abrirMenuMobile();
-  }
+    if (sidebar.classList.contains("mobile-open")) {
+        cerrarMenuMobile();
+    } else {
+        abrirMenuMobile();
+    }
 });
 
 sidebarOverlay.addEventListener("click", () => {
-  cerrarMenuMobile();
+    cerrarMenuMobile();
 });
 
 document.querySelectorAll(".menu-btn").forEach((btn) => {
-  btn.addEventListener("click", () => {
-    if (window.innerWidth <= 750) {
-      cerrarMenuMobile();
-    }
-  });
+    btn.addEventListener("click", () => {
+        if (window.innerWidth <= 750) {
+            cerrarMenuMobile();
+        }
+    });
 });
 
 // =====================================================
@@ -1514,7 +1455,7 @@ document
 
     });
 
-    function configurarTipoMovimiento() {
+function configurarTipoMovimiento() {
 
     const tipo =
         document.getElementById(
@@ -1798,7 +1739,7 @@ async function registrarMovimiento() {
                     mensaje = error.message;
                 }
 
-            } catch (_) {}
+            } catch (_) { }
 
             throw new Error(mensaje);
 
@@ -2091,11 +2032,10 @@ function mostrarDetalleAuditoria(auditoria) {
                         </span>
 
                         <strong>
-                            ${
-                                auditoria.usuario
-                                    ? auditoria.usuario.nombre
-                                    : "Sistema"
-                            }
+                            ${auditoria.usuario
+            ? auditoria.usuario.nombre
+            : "Sistema"
+        }
                         </strong>
                     </div>
 
@@ -2105,9 +2045,8 @@ function mostrarDetalleAuditoria(auditoria) {
 
                     <h3>Valores anteriores</h3>
 
-                    <pre>${
-                        valoresAnteriores || "Sin información"
-                    }</pre>
+                    <pre>${valoresAnteriores || "Sin información"
+        }</pre>
 
                 </div>
 
@@ -2115,9 +2054,8 @@ function mostrarDetalleAuditoria(auditoria) {
 
                     <h3>Valores nuevos</h3>
 
-                    <pre>${
-                        valoresNuevos || "Sin información"
-                    }</pre>
+                    <pre>${valoresNuevos || "Sin información"
+        }</pre>
 
                 </div>
 
@@ -2148,3 +2086,192 @@ document.addEventListener("DOMContentLoaded", () => {
     cargarAuditorias();
 
 });
+
+// =====================================================
+// USUARIOS
+// =====================================================
+
+async function cargarUsuarios() {
+
+    if (userRol !== "ADMIN") {
+        return;
+    }
+
+    try {
+
+        const usuarios = await apiGet("/usuarios");
+
+        const tabla =
+            document.getElementById("tablaUsuarios");
+
+        if (!tabla) return;
+
+        tabla.innerHTML = usuarios.map(usuario => `
+
+            <tr>
+
+                <td>${usuario.idusuario}</td>
+
+                <td>
+                    ${usuario.nombre} ${usuario.apellido}
+                </td>
+
+                <td>
+                    ${usuario.email}
+                </td>
+
+                <td>
+                    <span class="badge badge-warning">
+                        ${usuario.rol}
+                    </span>
+                </td>
+
+                <td>
+                    <span class="badge ${
+                        usuario.activo
+                            ? "badge-success"
+                            : "badge-danger"
+                    }">
+                        ${usuario.activo ? "Activo" : "Inactivo"}
+                    </span>
+                </td>
+
+            </tr>
+
+        `).join("");
+
+    } catch (error) {
+
+        console.error(
+            "Error cargando usuarios:",
+            error
+        );
+    }
+}
+
+
+const btnCrearUsuario =
+    document.getElementById("btnCrearUsuario");
+
+if (btnCrearUsuario) {
+
+    btnCrearUsuario.addEventListener(
+        "click",
+        async () => {
+
+            const mensaje =
+                document.getElementById("usuarioMensaje");
+
+            mensaje.textContent = "";
+
+            const usuario = {
+
+                nombre:
+                    document.getElementById(
+                        "usuarioNombre"
+                    ).value.trim(),
+
+                apellido:
+                    document.getElementById(
+                        "usuarioApellido"
+                    ).value.trim(),
+
+                email:
+                    document.getElementById(
+                        "usuarioEmail"
+                    ).value.trim(),
+
+                password:
+                    document.getElementById(
+                        "usuarioPassword"
+                    ).value,
+
+                rol:
+                    document.getElementById(
+                        "usuarioRol"
+                    ).value,
+
+                activo: true
+            };
+
+            if (
+                !usuario.nombre ||
+                !usuario.apellido ||
+                !usuario.email ||
+                !usuario.password ||
+                !usuario.rol
+            ) {
+
+                mensaje.textContent =
+                    "Completa todos los campos.";
+
+                return;
+            }
+
+            try {
+
+                const response = await fetch(
+                    `${API_BASE}/usuarios`,
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json",
+
+                            "Authorization":
+                                `Bearer ${token}`
+                        },
+
+                        body:
+                            JSON.stringify(usuario)
+                    }
+                );
+
+                if (!response.ok) {
+
+                    const texto =
+                        await response.text();
+
+                    throw new Error(
+                        texto ||
+                        `Error ${response.status}`
+                    );
+                }
+
+                alert(
+                    "Usuario creado correctamente."
+                );
+
+                document.getElementById(
+                    "usuarioNombre"
+                ).value = "";
+
+                document.getElementById(
+                    "usuarioApellido"
+                ).value = "";
+
+                document.getElementById(
+                    "usuarioEmail"
+                ).value = "";
+
+                document.getElementById(
+                    "usuarioPassword"
+                ).value = "";
+
+                document.getElementById(
+                    "usuarioRol"
+                ).value = "EMPLEADO";
+
+                cargarUsuarios();
+
+            } catch (error) {
+
+                console.error(error);
+
+                mensaje.textContent =
+                    "No se pudo crear el usuario.";
+            }
+        }
+    );
+}
